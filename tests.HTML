@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tests — Student Finance Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #6b7280; font-size: 0.95rem; margin-bottom: 2rem; }
+
+    .suite {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .suite-header {
+      background: #f3f4f6;
+      padding: 0.7rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .suite-header .suite-name {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .suite-count {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #6b7280;
+      background: #fff;
+      padding: 0.15rem 0.7rem;
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.5rem 1.2rem;
+      background: #f9fafb;
+      color: #6b7280;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.6rem 1.2rem;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr:hover td { background: #fafbfc; }
+
+    .input-val {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      word-break: break-all;
+    }
+
+    .input-val.object {
+      background: #ede9fe;
+      color: #4f46e5;
+      font-size: 0.75rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .pass { background: #dcfce7; color: #36d370; }
+    .fail { background: #c28484; color: #dc2626; }
+
+    .expected-lbl {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      background: #f9fafb;
+      padding: 1px 8px;
+      border-radius: 4px;
+    }
+
+    .summary {
+      margin-bottom: 2rem;
+      padding: 1.2rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .summary .stats {
+      margin-left: auto;
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .summary.all-pass {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+    
+    .summary.has-fail {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+    }
+    
+    .summary.has-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+    }
+
+    .pattern-box {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 0.78rem;
+      color: #4f46e5;
+      background: #ede9fe;
+      padding: 2px 10px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    a { color: #4f46e5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .back {
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .error-msg {
+      font-size: 0.78rem;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    
+
+    
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .suite-header { flex-direction: column; align-items: flex-start; }
+      table { font-size: 0.78rem; }
+      td, th { padding: 0.4rem 0.8rem; }
+      .input-val { font-size: 0.7rem; }
+      .summary { flex-direction: column; text-align: center; }
+      .summary .stats { margin-left: 0; }
+    }
+
+    @media (max-width: 480px) {
+      table { font-size: 0.7rem; }
+      td, th { padding: 0.3rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back">← Back to app</a>
+<h1> Validator Tests</h1>
+<p class="subtitle">Student Finance Tracker </p>
+
+<div id="summary"></div>
+<div id="suites"></div>
+
+<script type="module">
+
+import {
+  PATTERNS,
+  validateDescription,
+  validateAmount,
+  validateDate,
+  validateCategory,
+  validateExpenseForm,
+
+} from './scripts/validators.js';
+
+
+
+const tests = [];
+
+
+function addTest(suite, label, input, expectPass, expectedError = '') {
+  tests.push({ suite, label, input, expectPass, expectedError });
+}
+
+
+
+const S1 = 'Pattern: description  /^\\S(?:.*\\S)?$/';
+addTest(S1, 'Single word',            'Lunch',              true);
+addTest(S1, 'Two words',              'Bus pass',           true);
+addTest(S1, 'Leading space',          ' Lunch',             false);
+addTest(S1, 'Trailing space',         'Lunch ',             false);
+addTest(S1, 'Only spaces',            '   ',                false);
+addTest(S1, 'Empty string',           '',                   false);
+addTest(S1, 'Single char',            'X',                  true);
+addTest(S1, 'With punctuation',       'Coffee, tea!',       true);
+addTest(S1, 'Numbers only',           '12345',              true);
+addTest(S1, 'Mixed alphanumeric',     'Lunch123',           true);
+
+const S2 = 'Pattern: amount  /^(0|[1-9]\\d*)(\\.\\d{1,2})?$/';
+addTest(S2, 'Integer zero',           '0',                  true);
+addTest(S2, 'Integer amount',         '45',                 true);
+addTest(S2, 'One decimal place',      '12.5',               true);
+addTest(S2, 'Two decimal places',     '12.50',              true);
+addTest(S2, 'Large amount',           '1200',               true);
+addTest(S2, 'Leading zero',           '012',                false);
+addTest(S2, 'Three decimal places',   '12.555',             false);
+addTest(S2, 'Negative',               '-5',                 false);
+addTest(S2, 'Letters',                'abc',                false);
+addTest(S2, 'Empty',                  '',                   false);
+addTest(S2, 'Decimal without whole',  '.50',                false);
+
+const S3 = 'Pattern: date  /^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$/';
+addTest(S3, 'Valid date',             '2025-09-29',         true);
+addTest(S3, 'Start of year',          '2025-01-01',         true);
+addTest(S3, 'End of year',            '2025-12-31',         true);
+addTest(S3, 'Leap year day',          '2024-02-29',         true);
+addTest(S3, 'Wrong separator',        '29/09/2025',         false);
+addTest(S3, 'Month 00',               '2025-00-01',         false);
+addTest(S3, 'Month 13',               '2025-13-01',         false);
+addTest(S3, 'Day 00',                 '2025-01-00',         false);
+addTest(S3, 'Day 32',                 '2025-01-32',         false);
+addTest(S3, 'Missing year',           '09-29',              false);
+
+const S4 = 'Pattern: category  /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/';
+addTest(S4, 'Single word',            'Food',               true);
+addTest(S4, 'Hyphenated',             'Non-Food',           true);
+addTest(S4, 'Two words',              'Lab Fees',           true);
+addTest(S4, 'Numbers',                'Food2',              false);
+addTest(S4, 'Special chars',          'Food!!!',            false);
+addTest(S4, 'Empty',                  '',                   false);
+addTest(S4, 'With apostrophe',        "Student's",          false);
+addTest(S4, 'Multiple spaces',        'Food  Transport',    false);
+
+const S5 = 'Pattern: duplicateWord (advanced back-reference)  /\\b(\\w+)\\s+\\1\\b/i';
+addTest(S5, 'Duplicate: the the',     'the the',            true);
+addTest(S5, 'Duplicate: coffee coffee', 'coffee coffee',    true);
+addTest(S5, 'Case insensitive dup',   'The THE',            true);
+addTest(S5, 'No duplicate',           'coffee with friends', false);
+addTest(S5, 'Similar but different',  'test testing',       false);
+addTest(S5, 'Three in a row',         'test test test',     true);
+
+
+
+const S6 = 'validateDescription()';
+addTest(S6, 'Valid: normal sentence', 'Lunch at cafeteria', true);
+addTest(S6, 'Valid: single word',     'Coffee',             true);
+addTest(S6, 'Valid: with numbers',    'Room 101',           true);
+addTest(S6, 'Invalid: empty',         '',                   false, 'Description is required.');
+addTest(S6, 'Invalid: leading space', ' Lunch',             false, 'Remove any leading or trailing spaces.');
+addTest(S6, 'Invalid: trailing space', 'Lunch ',            false, 'Remove any leading or trailing spaces.');
+addTest(S6, 'Invalid: dup word',      'coffee coffee',      false, 'Description contains a duplicate consecutive word.');
+addTest(S6, 'Invalid: double space',  'coffee  latte',      false, 'Avoid double spaces in the description.');
+addTest(S6, 'Invalid: all spaces',    '   ',                false);
+
+
+
+const S7 = 'validateAmount()';
+addTest(S7, 'Valid: integer',         '45',                 true);
+addTest(S7, 'Valid: 2 decimals',      '12.50',              true);
+addTest(S7, 'Valid: large',           '1200',               true);
+addTest(S7, 'Valid: zero',            '0',                  true);
+addTest(S7, 'Invalid: empty',         '',                   false, 'Amount is required.');
+addTest(S7, 'Invalid: 3 decimals',    '12.555',             false, 'Enter a valid amount');
+addTest(S7, 'Invalid: letters',       'abc',                false, 'Enter a valid amount');
+addTest(S7, 'Invalid: negative',      '-5',                 false, 'Enter a valid amount');
+addTest(S7, 'Invalid: comma decimal', '1,000.50',           false);
+
+
+
+const S8 = 'validateDate()';
+addTest(S8, 'Valid: normal date',     '2025-09-29',         true);
+addTest(S8, 'Valid: leap year day',   '2024-02-29',         true);
+addTest(S8, 'Valid: first day',       '2025-01-01',         true);
+addTest(S8, 'Valid: last day',        '2025-12-31',         true);
+addTest(S8, 'Invalid: empty',         '',                   false, 'Date is required.');
+addTest(S8, 'Invalid: wrong format',  '29/09/2025',         false, 'Date must be in YYYY-MM-DD format.');
+addTest(S8, 'Invalid: month 13',      '2025-13-01',         false, 'Date must be in YYYY-MM-DD format.');
+addTest(S8, 'Invalid: day 32',        '2025-01-32',         false);
+
+
+
+const S9 = 'validateCategory()';
+addTest(S9, 'Valid: Food',            'Food',               true);
+addTest(S9, 'Valid: Transport',       'Transport',          true);
+addTest(S9, 'Valid: Lab Fees',        'Lab Fees',           true);
+addTest(S9, 'Invalid: empty',         '',                   false, 'Please select a category.');
+addTest(S9, 'Invalid: numbers',       'Food123',            false);
+
+
+
+const S10 = 'validateExpenseForm() — full form';
+addTest(S10, 'All valid',
+  { description:'Lunch', amount:'12.50', category:'Food', date:'2025-09-29' }, true);
+addTest(S10, 'Missing description',
+  { description:'', amount:'12.50', category:'Food', date:'2025-09-29' }, false);
+addTest(S10, 'Missing amount',
+  { description:'Lunch', amount:'', category:'Food', date:'2025-09-29' }, false);
+addTest(S10, 'Bad date',
+  { description:'Lunch', amount:'12.50', category:'Food', date:'bad-date' }, false);
+addTest(S10, 'No category',
+  { description:'Lunch', amount:'12.50', category:'', date:'2025-09-29' }, false);
+addTest(S10, 'Duplicate word in description',
+  { description:'coffee coffee', amount:'12.50', category:'Food', date:'2025-09-29' }, false);
+addTest(S10, 'Leading space in description',
+  { description:' Lunch', amount:'12.50', category:'Food', date:'2025-09-29' }, false);
+
+
+function runTest(test) {
+  let pass = false;
+  let actualError = '';
+
+  try {
+   
+    const suite = test.suite;
+
+    if (suite.startsWith('Pattern: description')) {
+      pass = PATTERNS.description.test(test.input) === test.expectPass;
+    } else if (suite.startsWith('Pattern: amount')) {
+      pass = PATTERNS.amount.test(test.input) === test.expectPass;
+    } else if (suite.startsWith('Pattern: date')) {
+      pass = PATTERNS.date.test(test.input) === test.expectPass;
+    } else if (suite.startsWith('Pattern: category')) {
+      pass = PATTERNS.category.test(test.input) === test.expectPass;
+    } else if (suite.startsWith('Pattern: duplicateWord')) {
+      pass = PATTERNS.duplicateWord.test(test.input) === test.expectPass;
+    } else if (suite.startsWith('validateDescription')) {
+      const err = validateDescription(test.input);
+      actualError = err;
+      pass = test.expectPass ? err === '' : err !== '';
+     
+      if (test.expectedError && !test.expectPass) {
+        pass = pass && err.includes(test.expectedError);
+      }
+    } else if (suite.startsWith('validateAmount')) {
+      const err = validateAmount(test.input);
+      actualError = err;
+      pass = test.expectPass ? err === '' : err !== '';
+      if (test.expectedError && !test.expectPass) {
+        pass = pass && err.includes(test.expectedError);
+      }
+    } else if (suite.startsWith('validateDate')) {
+      const err = validateDate(test.input);
+      actualError = err;
+      pass = test.expectPass ? err === '' : err !== '';
+      if (test.expectedError && !test.expectPass) {
+        pass = pass && err.includes(test.expectedError);
+      }
+    } else if (suite.startsWith('validateCategory')) {
+      const err = validateCategory(test.input);
+      actualError = err;
+      pass = test.expectPass ? err === '' : err !== '';
+      if (test.expectedError && !test.expectPass) {
+        pass = pass && err.includes(test.expectedError);
+      }
+    } else if (suite.startsWith('validateExpenseForm')) {
+      const result = validateExpenseForm(test.input);
+      actualError = result.errors ? result.errors.join(', ') : '';
+      pass = result.valid === test.expectPass;
+    }
+  } catch (error) {
+    pass = false;
+    actualError = 'Error: ' + error.message;
+  }
+
+  return { ...test, pass, actualError };
+}
+
+
+
+const results = tests.map(runTest);
+const totalPass = results.filter(t => t.pass).length;
+const totalFail = results.filter(t => !t.pass).length;
+
+const sumEl = document.getElementById('summary');
+let summaryClass = 'all-pass';
+let summaryIcon = '';
+let summaryText = `All ${totalPass} tests passed!`;
+
+if (totalFail > 0) {
+  summaryClass = 'has-fail';
+  summaryIcon = '';
+  summaryText = `${totalFail} test${totalFail > 1 ? 's' : ''} failed out of ${results.length}`;
+} else if (results.length === 0) {
+  summaryClass = 'has-warning';
+  summaryIcon = '';
+  summaryText = 'No tests found!';
+}
+
+sumEl.innerHTML = `
+  <div class="summary ${summaryClass}">
+    <span>${summaryIcon} ${summaryText}</span>
+    <span class="stats">${totalPass} passed · ${totalFail} failed · ${results.length} total</span>
+  </div>
+`;
+
+
+const suiteMap = {};
+results.forEach(t => {
+  if (!suiteMap[t.suite]) suiteMap[t.suite] = [];
+  suiteMap[t.suite].push(t);
+});
+
+const suitesEl = document.getElementById('suites');
+
+Object.entries(suiteMap).forEach(([suiteName, suiteTests]) => {
+  const suitePass = suiteTests.filter(t => t.pass).length;
+  const suiteFail = suiteTests.filter(t => !t.pass).length;
+
+  
+  const patternMatch = suiteName.match(/\/(.+)\//);
+  const patternLabel = patternMatch
+    ? `<span class="pattern-box">/${patternMatch[1]}/</span>`
+    : '';
+
+  const rows = suiteTests.map(t => {
+    const inputDisplay = typeof t.input === 'object'
+      ? JSON.stringify(t.input)
+      : JSON.stringify(t.input);
+    
+    const inputClass = typeof t.input === 'object' ? 'input-val object' : 'input-val';
+    const expectLabel = t.expectPass ? 'Should pass' : ' Should fail';
+    
+   
+    const errorDisplay = (t.actualError && !t.pass) 
+      ? `<div class="error-msg">${t.actualError}</div>` 
+      : '';
+
+    return `
+      <tr>
+        <td>${t.label}</td>
+        <td><span class="${inputClass}">${inputDisplay}</span></td>
+        <td><span class="expected-lbl">${expectLabel}</span></td>
+        <td>
+          <span class="badge ${t.pass ? 'pass' : 'fail'}">${t.pass ? 'PASS ' : 'FAIL '}</span>
+          ${errorDisplay}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  suitesEl.innerHTML += `
+    <div class="suite">
+      <div class="suite-header">
+        <div class="suite-name">
+          ${patternLabel}
+          <span>${suiteName.replace(/\/.+\//, '').trim()}</span>
+        </div>
+        <span class="suite-count">${suitePass}/${suiteTests.length} passed</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Input</th>
+            <th>Expected</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+});
+
+
+
+console.log(`Test Results: ${totalPass}/${results.length} passed`);
+if (totalFail > 0) {
+  console.warn(`Failure ${totalFail} test(s) failed:`);
+  results.filter(t => !t.pass).forEach(t => {
+    console.warn(`  - ${t.suite}: ${t.label} (${JSON.stringify(t.input)})`);
+  });
+} else {
+  console.log(' All tests passed!');
+}
+
+
+window.__testResults = {
+  results,
+  totalPass,
+  totalFail,
+  total: results.length,
+  summary: summaryText
+};
+</script>
+</body>
+</html>

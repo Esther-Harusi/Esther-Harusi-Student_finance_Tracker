@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Finance Tracker</title>
+  <meta name="description" content="Track your student spending by category, set a budget cap, and search your expense history." />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <div class="logo" aria-label="Student Finance Tracker home">
+          
+      <img 
+        src="assets/money.jpg" 
+        alt="Student Finance Tracker Logo" 
+        class="logo-image"
+        width="40" 
+        height="40"
+      />
+        <span class="logo-text">Finance Tracker</span>
+      </div>
+
+      <button
+        class="nav-toggle"
+        aria-controls="primary-nav"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        <span class="hamburger" aria-hidden="true"></span>
+        <span class="hamburger" aria-hidden="true"></span>
+        <span class="hamburger" aria-hidden="true"></span>
+      </button>
+
+      <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+        <ul role="list">
+          <li><a href="#dashboard" class="nav-link active" data-section="dashboard" aria-current="page">Dashboard</a></li>
+          <li><a href="#records" class="nav-link" data-section="records">Records</a></li>
+          <li><a href="#add-record" class="nav-link" data-section="add-record">Add expense</a></li>
+          <li><a href="#settings" class="nav-link" data-section="settings">Settings</a></li>
+          <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+ 
+  <main id="main-content" tabindex="-1">
+    <div class="container">
+
+    
+      <div id="status-msg" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+      <div id="budget-alert" role="alert" aria-live="assertive" aria-atomic="true" class="sr-only"></div>
+
+      
+      <section id="dashboard" class="page-section active" aria-labelledby="dashboard-heading">
+        <h1 id="dashboard-heading" class="page-heading">Dashboard</h1>
+
+        <div class="stats-grid" role="region" aria-label="Spending summary">
+          <article class="stat-card" aria-labelledby="stat-total-count">
+            <span class="stat-label" id="stat-total-count">Total records</span>
+            <span class="stat-value" id="stat-count-val">0</span>
+          </article>
+          <article class="stat-card" aria-labelledby="stat-total-spent">
+            <span class="stat-label" id="stat-total-spent">Total spent</span>
+            <span class="stat-value" id="stat-spent-val">KES 0.00</span>
+          </article>
+          <article class="stat-card" aria-labelledby="stat-top-cat">
+            <span class="stat-label" id="stat-top-cat">Top category</span>
+            <span class="stat-value" id="stat-category-val">—</span>
+          </article>
+        </div>
+
+        
+        <section class="budget-section" aria-labelledby="budget-heading">
+          <h2 id="budget-heading" class="section-heading">Budget</h2>
+          <div class="budget-bar-wrapper">
+            <div class="budget-bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Budget used">
+              <div class="budget-bar-fill" id="budget-bar-fill"></div>
+            </div>
+            <p class="budget-summary" id="budget-summary" aria-live="polite">
+              Set a budget cap in Settings.
+            </p>
+          </div>
+        </section>
+
+        
+        <section class="chart-section" aria-labelledby="chart-heading">
+          <h2 id="chart-heading" class="section-heading">Weekly spending trend</h2>
+          <div class="bar-chart" id="bar-chart" aria-label="Bar chart of spending over last 7 days" role="img">
+            
+          </div>
+        </section>
+      </section>
+
+      
+      
+<section id="records" class="page-section" aria-labelledby="records-heading">
+  <h1 id="records-heading" class="page-heading">All records</h1>
+
+  
+  <div class="toolbar">
+    <div class="search-wrapper">
+      <label for="search-input" class="sr-only">Search records</label>
+      <input type="search" id="search-input" class="search-input" 
+             placeholder="Search or regex, e.g. (coffee|tea)" 
+             autocomplete="off" spellcheck="false" />
+      <label class="case-toggle">
+        <input type="checkbox" id="case-sensitive" />
+        <span>Aa</span>
+      </label>
+    </div>
+
+    <div class="sort-controls">
+      <button class="sort-btn" data-sort="date" aria-pressed="true">Date</button>
+      <button class="sort-btn" data-sort="description" aria-pressed="false">A↕Z</button>
+      <button class="sort-btn" data-sort="amount" aria-pressed="false">$ ↑↓</button>
+    </div>
+  </div>
+
+
+  <p class="results-count" id="results-count"></p>
+
+  
+  <div class="table-wrapper">
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="records-tbody">
+       
+      </tbody>
+    </table>
+  </div>
+
+  
+  <ul class="record-cards" id="record-cards">
+    
+  </ul>
+
+  
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <p>No records found. <a href="#add-record">Add your first expense</a>.</p>
+  </div>
+</section>
+      
+
+      
+      <section id="add-record" class="page-section" aria-labelledby="form-heading" hidden>
+        <h1 id="form-heading" class="page-heading">Add expense</h1>
+
+        <form id="expense-form" class="expense-form" novalidate aria-label="Add or edit expense">
+          <input type="hidden" id="edit-id" value="" />
+
+          <div class="form-group">
+            <label for="f-description" class="form-label">
+              Description <span class="required" aria-hidden="true">*</span>
+            </label>
+            <input type="text" id="f-description" name="description" class="form-input" required autocomplete="off" aria-describedby="f-description-err f-description-hint" />
+            <span class="form-hint" id="f-description-hint"> No duplicate words.</span>
+            <span class="form-error" id="f-description-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-amount" class="form-label">
+              Amount (KES) <span class="required" aria-hidden="true">*</span>
+            </label>
+            <input type="text" id="f-amount" name="amount" class="form-input" required inputmode="decimal" autocomplete="on" aria-describedby="f-amount-err f-amount-hint" />
+            <span class="form-hint" id="f-amount-hint">Numbers only, up to 2 decimal places. E.g. 12.50</span>
+            <span class="form-error" id="f-amount-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-category" class="form-label">
+              Category <span class="required" aria-hidden="true">*</span>
+            </label>
+            <select id="f-category" name="category" class="form-input form-select" required aria-describedby="f-category-err">
+              <option value="">— Select a category —</option>
+              <option value="Food">Food</option>
+              <option value="Books">Books</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Fees">Fees</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="form-error" id="f-category-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="f-date" class="form-label">
+              Date <span class="required" aria-hidden="true">*</span>
+            </label>
+            <input type="date" id="f-date" name="date" class="form-input" required aria-describedby="f-date-err" />
+            <span class="form-error" id="f-date-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="form-submit-btn">Save expense</button>
+            <button type="button" class="btn btn-secondary" id="form-cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+     
+      <section id="settings" class="page-section" aria-labelledby="settings-heading" hidden>
+        <h1 id="settings-heading" class="page-heading">Settings</h1>
+
+        <form id="settings-form" class="settings-form" novalidate aria-label="App settings">
+
+          <fieldset class="settings-group">
+            <legend class="section-heading">Budget cap</legend>
+            <div class="form-group">
+              <label for="s-budget" class="form-label">Monthly limit (KES)</label>
+              <input type="text" id="s-budget" name="budget" class="form-input" inputmode="decimal" placeholder="e.g. 500" aria-describedby="s-budget-err" />
+              <span class="form-error" id="s-budget-err" role="alert" aria-live="polite"></span>
+            </div>
+          </fieldset>
+
+          <fieldset class="settings-group">
+            <legend class="section-heading">Currency conversion rates</legend>
+            <p class="settings-note">Enter how many units of the foreign currency equal 1 KES.</p>
+            <div class="form-group">
+              <label for="s-RWF" class="form-label">1 USD = ? RWF</label>
+              <input type="text" id="s-RWF" name="RWF" class="form-input" inputmode="decimal" placeholder="e.g. 0.92" aria-describedby="s-RWF-err" />
+              <span class="form-error" id="s-RWF-err" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="s-KES" class="form-label">1 USD = ? KES</label>
+              <input type="text" id="s-KES" name="KES" class="form-input" inputmode="decimal" placeholder="e.g. 0.79" aria-describedby="s-KES-err" />
+              <span class="form-error" id="s-KES-err" role="alert" aria-live="polite"></span>
+            </div>
+          </fieldset>
+
+          <!-- Categories -->
+          <fieldset class="settings-group">
+            <legend class="section-heading">Categories</legend>
+            <div id="categories-list" class="categories-list" role="list" aria-label="Custom categories">
+              <!-- JS renders category chips here -->
+            </div>
+            <div class="form-group add-category-row">
+              <label for="s-new-category" class="form-label">Add new category</label>
+              <div class="inline-input-row">
+                <input type="text" id="s-new-category" class="form-input" placeholder="e.g. Health" aria-describedby="s-cat-err" />
+                <button type="button" class="btn btn-secondary" id="add-category-btn">Add</button>
+              </div>
+              <span class="form-error" id="s-cat-err" role="alert" aria-live="polite"></span>
+            </div>
+          </fieldset>
+
+          <!-- Data import / export -->
+          <fieldset class="settings-group">
+            <legend class="section-heading">Data</legend>
+            <div class="data-buttons">
+              <button type="button" class="btn btn-secondary" id="export-btn">⬇ Export JSON</button>
+              <label class="btn btn-secondary" for="import-file">⬆ Import JSON</label>
+              <input type="file" id="import-file" accept=".json" class="sr-only" aria-label="Import JSON file" />
+            </div>
+            <span class="form-error" id="import-err" role="alert" aria-live="polite"></span>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save settings</button>
+          </div>
+        </form>
+      </section>
+
+      
+      <section id="about" class="page-section" aria-labelledby="about-heading" hidden>
+        <h1 id="about-heading" class="page-heading">About</h1>
+        <div class="about-content">
+          <p>Student Finance Tracker helps students  to track their  daily spending, stay within  their  monthly budget, and understand how and where their money goes. </p>
+          <p>Features include:</p>
+          <ul>
+            
+            <li>Add expences</li>
+            <li> Edit expenses</li>
+            <li>Delete expenses</li>
+            <li>Searching </li>
+            <li>Budget cap with visual progress bar</li>
+            <li>7-day spending trend chart</li>
+            <li>Currency conversion (USD / KES / RWF)</li>
+            <li>Import and export your data as JSON</li>
+          </ul>
+          <h2 class="section-heading">Contact</h2>
+          <ul class="contact-list">
+            <li><a href="https://github.com/your-username" class="contact-link">https://github.com/Esther-Harusi/Esther-Harusi-Student_finance_Tracker</a></li>
+            <li><a href="mailto:you@example.com" class="contact-link">e.konde@alustudent.com</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="footer-text">Student Finance Tracker.Accounting for every penny</p>
+    </div>
+  </footer>
+
+ 
+<script>
+  (function() {
+    'use strict';
+    
+    console.log('App starting...');
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    
+    function init() {
+      console.log(' DOM ready, initializing...');
+      
+      const navLinks = document.querySelectorAll('.nav-link');
+      const allSections = document.querySelectorAll('.page-section');
+      
+      console.log(`Found ${navLinks.length} nav links and ${allSections.length} sections`);
+      
+      showSection('dashboard');
+      
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const sectionId = this.dataset.section;
+          console.log(` Switching to: ${sectionId}`);
+          showSection(sectionId);
+          
+          const nav = document.querySelector('.primary-nav');
+          const toggle = document.querySelector('.nav-toggle');
+          if (nav && nav.classList.contains('open')) {
+            nav.classList.remove('open');
+            if (toggle) {
+              toggle.setAttribute('aria-expanded', 'false');
+              toggle.setAttribute('aria-label', 'Open navigation menu');
+            }
+          }
+        });
+      });
+      
+      const navToggle = document.querySelector('.nav-toggle');
+      const primaryNav = document.querySelector('.primary-nav');
+      
+      if (navToggle && primaryNav) {
+        navToggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          primaryNav.classList.toggle('open');
+          const isOpen = primaryNav.classList.contains('open');
+          this.setAttribute('aria-expanded', isOpen);
+          this.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+        });
+      }
+      
+      console.log('App initialized successfully!');
+      console.log(' Click "Add expense" to see the form');
+      console.log('Click "Settings" to set your budget');
+    }
+    
+    function showSection(sectionId) {
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.setAttribute('hidden', '');
+        section.classList.remove('active');
+      });
+      
+      const target = document.getElementById(sectionId);
+      if (target) {
+        target.removeAttribute('hidden');
+        target.classList.add('active');
+        console.log(` Showing section: ${sectionId}`);
+      } else {
+        console.warn(` Section not found: ${sectionId}`);
+      }
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        link.removeAttribute('aria-current');
+        if (link.dataset.section === sectionId) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', 'page');
+        }
+      });
+    }
+  })();
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('expense-form');
+    const cancelBtn = document.getElementById('form-cancel-btn');
+    
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const description = document.getElementById('f-description').value.trim();
+        const amount = document.getElementById('f-amount').value.trim();
+        const category = document.getElementById('f-category').value;
+        const date = document.getElementById('f-date').value;
+        
+        if (!description) {
+          alert('Please enter a description');
+          return;
+        }
+        if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+          alert('Please enter a valid amount');
+          return;
+        }
+        if (!category) {
+          alert('Please select a category');
+          return;
+        }
+        if (!date) {
+          alert('Please select a date');
+          return;
+        }
+        
+        const transaction = {
+          id: 'txn_' + Date.now(),
+          description: description,
+          amount: parseFloat(amount),
+          category: category,
+          date: date,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        console.log(' Transaction created:', transaction);
+        
+        let records = JSON.parse(localStorage.getItem('financeRecords') || '[]');
+        records.push(transaction);
+        localStorage.setItem('financeRecords', JSON.stringify(records));
+        
+        alert(' Transaction saved successfully!');
+        form.reset();
+        
+        document.querySelector('[data-section="records"]')?.click();
+        updateStats();
+        
+        
+        if (window.forceRecordsRefresh) {
+          window.forceRecordsRefresh();
+        }
+      });
+    }
+    
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function() {
+        form.reset();
+      });
+    }
+  });
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const settingsForm = document.getElementById('settings-form');
+    const budgetInput = document.getElementById('s-budget');
+    
+    const savedSettings = JSON.parse(localStorage.getItem('financeSettings') || '{}');
+    if (savedSettings.budget) {
+      budgetInput.value = savedSettings.budget;
+    }
+    
+    if (settingsForm) {
+      settingsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const budget = document.getElementById('s-budget').value.trim();
+        
+        if (!budget || isNaN(parseFloat(budget)) || parseFloat(budget) <= 0) {
+          alert('Please enter a valid budget amount');
+          return;
+        }
+        
+        const settings = {
+          budget: parseFloat(budget),
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem('financeSettings', JSON.stringify(settings));
+        
+        alert(' Settings saved successfully!');
+        updateStats();
+      });
+    }
+  });
+</script>
+
+
+<script>
+  function updateStats() {
+    const records = JSON.parse(localStorage.getItem('financeRecords') || '[]');
+    const settings = JSON.parse(localStorage.getItem('financeSettings') || '{}');
+    
+    const countEl = document.getElementById('stat-count-val');
+    if (countEl) countEl.textContent = records.length;
+    
+    const total = records.reduce((sum, r) => sum + (r.amount || 0), 0);
+    const spentEl = document.getElementById('stat-spent-val');
+    if (spentEl) spentEl.textContent = 'KES' + total.toFixed(2);
+    
+    if (records.length > 0) {
+      const categories = {};
+      records.forEach(r => {
+        categories[r.category] = (categories[r.category] || 0) + r.amount;
+      });
+      let topCat = '—';
+      let topAmount = 0;
+      Object.entries(categories).forEach(([cat, amount]) => {
+        if (amount > topAmount) {
+          topAmount = amount;
+          topCat = cat;
+        }
+      });
+      const catEl = document.getElementById('stat-category-val');
+      if (catEl) catEl.textContent = topCat;
+    }
+    
+    const budget = settings.budget || 0;
+    const fill = document.getElementById('budget-bar-fill');
+    const summary = document.getElementById('budget-summary');
+    
+    if (budget > 0) {
+      const pct = Math.min((total / budget) * 100, 100);
+      if (fill) {
+        fill.style.width = pct + '%';
+        fill.className = 'budget-bar-fill' + (pct >= 100 ? ' danger' : pct >= 80 ? ' warning' : '');
+      }
+      if (summary) {
+        const remaining = budget - total;
+        if (remaining >= 0) {
+          summary.textContent = '$' + remaining.toFixed(2) + ' remaining of $' + budget.toFixed(2) + ' budget (' + Math.round(pct) + '% used).';
+          summary.className = 'budget-summary';
+        } else {
+          summary.textContent = ' Over budget by $' + Math.abs(remaining).toFixed(2) + ' — $' + total.toFixed(2) + ' spent of $' + budget.toFixed(2) + ' cap.';
+          summary.className = 'budget-summary over-budget';
+        }
+      }
+    } else {
+      if (fill) {
+        fill.style.width = '0%';
+        fill.className = 'budget-bar-fill';
+      }
+      if (summary) {
+        summary.textContent = 'Set a budget cap in Settings.';
+        summary.className = 'budget-summary';
+      }
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', updateStats);
+</script>
+
+
+
+<script src="script/dashboard.js"></script>
+<script src="script/records-complete.js"></script>
+
+</body>
+</html>

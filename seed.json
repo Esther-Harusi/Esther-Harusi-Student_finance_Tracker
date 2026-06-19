@@ -1,0 +1,109 @@
+{
+  "exportedAt": "2026-06-19T10:00:23.000Z",
+  "version": 1,
+  "records": [
+    {
+      "id": "rec_0001",
+      "description": "Lunch at cafeteria",
+      "amount": 12.5,
+      "category": "Food",
+      "date": "2026-06-19",
+      "createdAt": "2026-06-19T10:00:23.000Z",
+      "updatedAt": "2026-06-19T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0002",
+      "description": "Morning coffee",
+      "amount": 3.75,
+      "category": "Food",
+      "date": "2026-06-19",
+      "createdAt": "2026-06-19T10:00:23.000Z",
+      "updatedAt": "2026-06-19T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0003",
+      "description": "Bus fare to campus",
+      "amount": 2.5,
+      "category": "Transport",
+      "date": "2026-06-18",
+      "createdAt": "2026-06-18T10:00:23.000Z",
+      "updatedAt": "2026-06-18T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0004",
+      "description": "Chemistry textbook",
+      "amount": 45.0,
+      "category": "Books",
+      "date": "2026-06-18",
+      "createdAt": "2026-06-18T10:00:23.000Z",
+      "updatedAt": "2026-06-18T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0005",
+      "description": "Cinema ticket",
+      "amount": 8.0,
+      "category": "Entertainment",
+      "date": "2026-06-17",
+      "createdAt": "2026-06-17T10:00:23.000Z",
+      "updatedAt": "2026-06-17T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0006",
+      "description": "Supermarket groceries",
+      "amount": 22.8,
+      "category": "Food",
+      "date": "2026-06-17",
+      "createdAt": "2026-06-17T10:00:23.000Z",
+      "updatedAt": "2026-06-17T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0007",
+      "description": "Lab exam fee",
+      "amount": 15.0,
+      "category": "Fees",
+      "date": "2026-06-16",
+      "createdAt": "2026-06-16T10:00:23.000Z",
+      "updatedAt": "2026-06-16T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0008",
+      "description": "Taxi to town",
+      "amount": 6.0,
+      "category": "Transport",
+      "date": "2026-06-15",
+      "createdAt": "2026-06-15T10:00:23.000Z",
+      "updatedAt": "2026-06-15T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0009",
+      "description": "Python programming guide",
+      "amount": 0.99,
+      "category": "Books",
+      "date": "2026-06-14",
+      "createdAt": "2026-06-14T10:00:23.000Z",
+      "updatedAt": "2026-06-14T10:00:23.000Z"
+    },
+    {
+      "id": "rec_0010",
+      "description": "Monthly bus pass",
+      "amount": 30.0,
+      "category": "Transport",
+      "date": "2026-06-13",
+      "createdAt": "2026-06-13T10:00:23.000Z",
+      "updatedAt": "2026-06-13T10:00:23.000Z"
+    }
+  ],
+  "settings": {
+    "budget": 200,
+    "eurRate": 0.92,
+    "gbpRate": 0.79,
+    "categories": [
+      "Food",
+      "Books",
+      "Transport",
+      "Entertainment",
+      "Fees",
+      "Other"
+    ]
+  }
+}
