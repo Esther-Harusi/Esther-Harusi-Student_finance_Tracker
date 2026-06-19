@@ -3,7 +3,7 @@
 A fully accessible, responsive, vHTML/CSS/JS Student  Finance tracker. It helps students to budget 
 Track and know how they  use their money.
 
-**GitHub Pages URL:** https://your-username.github.io/finance-tracker/
+**GitHub Pages URL:**https://esther-harusi.github.io/Esther-Harusi-Student_finance_Tracker/
 
 ---
 
